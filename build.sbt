@@ -8,6 +8,8 @@ scalaVersion := "2.10.0"
 
 scalacOptions ++= Seq("-feature")
 
+libraryDependencies += "org.scala-lang" % "scala-actors" % "2.10.0-M3"
+
 libraryDependencies += "org.scalatest" % "scalatest_2.10" % "1.9.1" % "test"
 
 libraryDependencies += "junit" % "junit" % "4.10" % "test"

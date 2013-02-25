@@ -9,12 +9,13 @@ import org.jboss.netty.handler.codec.frame.FrameDecoder
 import java.net.InetSocketAddress
 import java.util.concurrent._
 import org.slf4j.LoggerFactory
+import RedisClientTypes._
+import scala.actors.Actor
 
 object RedisClientTypes {
     type BinVal = Array[Byte]
     type KV = Tuple2[String, BinVal]
 }
-import RedisClientTypes._
 
 // tested with 2.1.3 redis, ubuntu 10.04 ships with 1.2.0 where some newer commands won't work
 sealed abstract class Cmd
@@ -104,7 +105,6 @@ class ResultFuture(val cmd: Cmd) extends Future[Result] {
     }
 }
 
-
 object RedisConnection {
     private[redis] type OpQueue = ArrayBlockingQueue[ResultFuture]
 
@@ -113,8 +113,8 @@ object RedisConnection {
     private[redis] val channelFactory = new NioClientSocketChannelFactory(executor, executor)
     private[redis] val commandEncoder = new RedisCommandEncoder() // stateless
     private[redis] val cmdQueue = new ArrayBlockingQueue[Pair[RedisConnection, ResultFuture]](2048)
-
-    scala.actors.Actor.actor { while(true) {
+     
+    Actor.actor { while(true) {
         val (conn, f) = cmdQueue.take()
         try {
             if (conn.isOpen) {

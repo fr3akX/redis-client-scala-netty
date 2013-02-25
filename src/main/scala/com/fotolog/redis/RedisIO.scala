@@ -8,7 +8,7 @@ import org.jboss.netty.bootstrap.ClientBootstrap
 import org.jboss.netty.handler.codec.frame.FrameDecoder
 import java.net.InetSocketAddress
 import java.util.concurrent._
-import org.apache.log4j.Logger
+import org.slf4j.LoggerFactory
 
 object RedisClientTypes {
     type BinVal = Array[Byte]
@@ -108,7 +108,7 @@ class ResultFuture(val cmd: Cmd) extends Future[Result] {
 object RedisConnection {
     private[redis] type OpQueue = ArrayBlockingQueue[ResultFuture]
 
-    private[redis] val log = Logger.getLogger(getClass)
+    private[redis] val log = LoggerFactory.getLogger(getClass)
     private[redis] val executor = Executors.newCachedThreadPool()
     private[redis] val channelFactory = new NioClientSocketChannelFactory(executor, executor)
     private[redis] val commandEncoder = new RedisCommandEncoder() // stateless
